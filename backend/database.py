@@ -4,18 +4,19 @@ from dotenv import load_dotenv
 from pathlib import Path
 import certifi
 
-# Load .env for local only
 env_path = Path(__file__).parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 MONGO_DETAILS = os.getenv("MONGO_URI")
 
 if not MONGO_DETAILS:
-    raise Exception("❌ MONGO_URI not found in environment variables")
+    raise Exception("MONGO_URI missing")
 
 client = motor.motor_asyncio.AsyncIOMotorClient(
     MONGO_DETAILS,
-    tlsCAFile=certifi.where()   # 🔥 IMPORTANT FIX
+    tls=True,
+    tlsAllowInvalidCertificates=True,
+    tlsCAFile=certifi.where(),   # ✅ REQUIRED
 )
 
 database = client.mcq_platform
