@@ -2,14 +2,22 @@ import motor.motor_asyncio
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import certifi
 
-# Fix: Load .env from the backend directory specifically
+# Load .env for local only
 env_path = Path(__file__).parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 MONGO_DETAILS = os.getenv("MONGO_URI")
 
-client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
+if not MONGO_DETAILS:
+    raise Exception("❌ MONGO_URI not found in environment variables")
+
+client = motor.motor_asyncio.AsyncIOMotorClient(
+    MONGO_DETAILS,
+    tlsCAFile=certifi.where()   # 🔥 IMPORTANT FIX
+)
+
 database = client.mcq_platform
 
 user_collection = database.get_collection("users")
