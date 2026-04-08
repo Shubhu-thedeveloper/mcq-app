@@ -27,3 +27,7 @@ app.include_router(progress.router)
 @app.get("/")
 def root():
     return {"message": "Welcome to the Spaced Repetition MCQ API"}
+
+@app.get("/health")
+def health():
+    return "OK"
